@@ -44,7 +44,7 @@
 
    <header class="main-header">
      <!-- Logo -->
-     <a href="index2.html" class="logo">
+     <a href="#" class="logo">
        <!-- mini logo for sidebar mini 50x50 pixels -->
        <span class="logo-mini"><b>Sf-P</b></span>
        <!-- logo for regular state and mobile devices -->
@@ -154,8 +154,8 @@
              <i class="fa fa-dashboard"></i> <span>Dashboard</span>
            </a>
          </li>
-         <li class="treeview">
-           <a href="#">
+         <li>
+           <a href="api_subscription">
              <i class="fa fa-files-o"></i>
                <span>API Subscription</span>
            </a>

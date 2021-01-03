@@ -169,7 +169,7 @@
              </span>
            </a>
            <ul class="treeview-menu">
-             <li><a href="payment"><i class="fa fa-circle-o"></i> pending</a></li>
+             <li><a href="payment" id="request"><i class="fa fa-circle-o"></i> pending</a></li>
              <li><a href="payment_approved"><i class="fa fa-circle-o"></i> Approved</a></li>
            </ul>
          </li>

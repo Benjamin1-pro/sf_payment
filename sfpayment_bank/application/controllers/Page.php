@@ -20,15 +20,16 @@ class Page extends CI_Controller {
 		if ($session) {
 
 			if ($page=='dashboard' || $page=='payment' || $page=='payment_approved' || $page=='students'
-			 || $page=='deposit_slipBank' || $page=='transaction_list' || $page=='kyc') {
+			 || $page=='deposit_slipBank' || $page=='transaction_list' || $page=='kyc' || $page=='api_subscription') {
 
 				 $data['kyc_display'] = $this->bankModel->kyc_display();
 				 $data['transactionlist'] = $this->bankModel->transactionlist();
+				 $data['api_provider'] = $this->bankModel->fetch_apikeys();
 				 $data['staffInfo'] = $this->loginModel->fetchalldata();
 
 				$this->load->view('header', $data);
 				$this->load->view($page, $data);
-				$this->load->view('footer');
+				$this->load->view('footer', $data);
 			}
 		}else {
 			$this->load->view('login');

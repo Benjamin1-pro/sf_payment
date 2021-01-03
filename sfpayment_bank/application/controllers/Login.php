@@ -14,9 +14,10 @@ class Login extends CI_Controller
 		$login = $this->loginModel->login_staffBank($email, $password);
 
 		if ($login) {
+			$this->load->library('session');
 			$bankStaff = array(
-				'id' => $login1,
-				'logged_in' => 'bank_staff'
+				'id' => $login,
+				'logged_in' => 'logged_in'
 			);
 			$this->session->set_userdata($bankStaff);
 			redirect('../../dashboard');

@@ -143,5 +143,35 @@ $.widget.bridge('uibutton', $.ui.button);
     })
   })
 </script>
+<script>
+$(document).ready(function(){
+ $('#search').keyup(function(){
+  var searchText = $(this).val();
+  if (searchText != '') {
+    $('#state').val('');
+    $.ajax({
+      url: "bank/get_kyc",
+      method: "post",
+      data: {query:searchText},
+      dataType: "text",
+      success: function(data)
+      {
+        $("#show_kyc").html(data);
+      }
+    });
+  }
+  else {
+    $("#show_kyc").html('');
+  }
+ });
+
+ $('#show_kyc').on('click', 'a', function() {
+  var click_text = $(this).text().split('|');
+  $('#search').val($.trim(click_text[0]));
+  $('#show_accountnumber').val($.trim(click_text[1]));
+  $("#show_kyc").html('');
+ });
+});
+</script>
 </body>
 </html>

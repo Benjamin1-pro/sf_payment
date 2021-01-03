@@ -11,6 +11,24 @@
 
 <!-- jQuery 3 -->
 <script src="annex/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+$(document).ready(function()
+{
+  setInterval(function()
+  {
+    $.ajax({
+      url:"schoolfees/get_transaction",
+      method:"get",
+      success:function(response){
+        $('#transaction_list').html(response);
+      }
+    });
+    refresh();
+  }, 1000);
+
+
+});
+</script>
 <!-- jQuery UI 1.11.4 -->
 <script src="annex/bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -143,5 +161,7 @@ $.widget.bridge('uibutton', $.ui.button);
     })
   })
 </script>
+
+<!-- PENDING PAYMENT -->
 </body>
 </html>

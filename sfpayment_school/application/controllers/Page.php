@@ -14,6 +14,7 @@ class Page extends CI_Controller {
 		$data['title'] = ucfirst($page);
 		$this->load->model('schoolfeesModel');
 		$this->load->model('loginModel');
+		$this->load->model('apirequestModel');
 
 		$session = $this->session->userdata('logged_in');
 
@@ -26,6 +27,7 @@ class Page extends CI_Controller {
 				$data['approved'] = $this->schoolfeesModel->displayscf_approved();
 				$data['students'] = $this->schoolfeesModel->display_students();
 				$data['staffInfo'] = $this->loginModel->fetchalldata();
+				// $data['apiResponse'] = $this->schoolfeesModel->compare_in_data();
 
 				$this->load->view('header', $data);
 				$this->load->view($page, $data);

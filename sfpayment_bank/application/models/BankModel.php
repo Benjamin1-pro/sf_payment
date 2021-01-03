@@ -2,6 +2,8 @@
 
 class bankModel extends CI_Model
 {
+	public $kyc_id;
+
 	public function depositslip_bank()
 	{
 		$deposit = array(
@@ -30,5 +32,89 @@ class bankModel extends CI_Model
 		$query = "SELECT * FROM transactions WHERE status = 1";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
+	}
+
+	public function api_provider($api_key, $random_key, $api_name, $account_number)
+	{
+		$kyc_query = "SELECT id FROM kyc WHERE account_number = ?";
+		$kycs_id = $this->db->query($kyc_query, $account_number);
+		$kycs_id = $kycs_id->result_array();
+		foreach ($kycs_id as $row) {
+			$kyc_id = $row['id'];
+		}
+
+		$staff_id = $this->session->userdata('id');
+		$data = array(
+
+			'kyc_id'	=> $kyc_id,
+			'api_key'	=> $api_key,
+			'random_string' => $random_key,
+			'api_name' => $api_name,
+			'added_by'	=> $staff_id,
+			'c_date' => date(DATE_RFC1036, time())
+		);
+
+		$result = $this->db->insert('api_keys', $data);
+		return ($result == true ? true : false);
+	}
+
+	public function kyc_exist($account_number)
+	{
+		$kyc_query = "SELECT id FROM kyc WHERE account_number = ?";
+		$kycs_id = $this->db->query($kyc_query, $account_number);
+		$kycs_id = $kycs_id->result_array();
+		foreach ($kycs_id as $row) {
+			$this->kyc_id = $row['id'];
+		}
+		$query = "SELECT kyc_id FROM api_keys WHERE kyc_id = ?";
+		$sql = $this->db->query($query, $this->kyc_id);
+		return $sql->result_array();
+	}
+
+	public function fetch_apikeys()
+	{
+
+		$query = "SELECT * FROM api_keys";
+		$sql = $this->db->query($query);
+		return $sql->result_array();
+	}
+
+	public function fetch_kyc_name()
+	{
+		$query = "SELECT * FROM kyc WHERE id = ?";
+		$sql = $this->db->query($query, $this->kyc_id);
+		return $sql->result_array();
+	}
+
+	public function api_update($api_key, $random_key, $api_name, $account_number, $apiKey)
+	{
+		$kyc_query = "SELECT id FROM kyc WHERE account_number = ?";
+		$kycs_id = $this->db->query($kyc_query, $account_number);
+		$kycs_id = $kycs_id->result_array();
+		foreach ($kycs_id as $row) {
+			$kyc_id = $row['id'];
+		}
+
+		$staff_id = $this->session->userdata('id');
+		$data = array(
+
+			'kyc_id'	=> $kyc_id,
+			'api_key'	=> $api_key,
+			'random_string' => $random_key,
+			'api_name' => $api_name,
+			'added_by'	=> $staff_id,
+			'c_date' => date(DATE_RFC1036, time())
+		);
+
+		$this->db->where('id', $apiKey);
+		$update = $this->db->update('api_keys', $data);
+		return ($update == true ? true : false);
+	}
+
+	public function deleteApikey($apiKeyID)
+	{
+		$this->db->where('id', $apiKeyID);
+		$delete = $this->db->delete('api_keys');
+		return ($delete == true ? true : false);
 	}
 }
