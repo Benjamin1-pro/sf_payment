@@ -14,7 +14,7 @@ class ApirequestModel extends CI_Model
 										}
 							}';
 
-		curl_setopt($curl, CURLOPT_URL, 'http://localhost/transaction_api/');
+		curl_setopt($curl, CURLOPT_URL, 'http://localhost/project/transaction_api/');
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['content-type: application/json']);
@@ -46,7 +46,7 @@ class ApirequestModel extends CI_Model
 									}';
 
 			curl_setopt_array($curl, array(
-				CURLOPT_URL => "http://localhost/transaction_api/",
+				CURLOPT_URL => "http://localhost//project/transaction_api/",
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_ENCODING => "",
 				CURLOPT_MAXREDIRS => 10,

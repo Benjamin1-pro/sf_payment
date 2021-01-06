@@ -27,7 +27,7 @@ class Page extends CI_Controller {
 				$data['approved'] = $this->schoolfeesModel->displayscf_approved();
 				$data['students'] = $this->schoolfeesModel->display_students();
 				$data['staffInfo'] = $this->loginModel->fetchalldata();
-				// $data['apiResponse'] = $this->schoolfeesModel->compare_in_data();
+				$data['apiResponse'] = $this->schoolfeesModel->compare_in_data();
 
 				$this->load->view('header', $data);
 				$this->load->view($page, $data);

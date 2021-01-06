@@ -11,9 +11,6 @@
          <li class="active">Dashboard</li>
        </ol>
      </section>
-     <?php //foreach ($apiResponse as $key => $value) { $value = (Array)$value;
-      // echo($value['id']);
-    // }?>
      <!-- Main content -->
      <section class="content">
        <!-- Small boxes (Stat box) -->

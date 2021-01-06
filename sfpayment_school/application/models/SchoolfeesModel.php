@@ -83,19 +83,15 @@ class SchoolfeesModel extends CI_Model
 		return $sql->result_array();
 	}
 
-	// public function compare_in_data()
-	// {
-	// 	$transactionID = $this->apirequestModel->request_api();
-	// 	foreach ($transactionID as $key => $value) { $value = (Array)$value;
-	// 		$dataID = $value['id'];
-	// 		$dataID = (Array)$dataID;
-	// 		$data =array_map('intval', $dataID);
-	// 		$data = implode(',', $data);
-	// 		print_r($data);
-	//
-	// 	}
-	// 			$sql = "SELECT *	FROM school_fee	WHERE api_transactionID IN($data)";
-	// 			$query = $this->db->query($sql);
-	// 			return $query->result_array();
-	// 	}
+	public function compare_in_data()
+	{
+		$transactionID = $this->apirequestModel->request_api();
+		foreach ($transactionID as $key => $value) { $value = (Array)$value;
+			$dataID[] = $value['id'];
+		}
+				$dataID  = implode(',', $dataID);
+				$sql = "SELECT *	FROM school_fees	WHERE api_transactionID IN($dataID)";
+				$query = $this->db->query($sql);
+				return $query->result_array();
+		}
 }

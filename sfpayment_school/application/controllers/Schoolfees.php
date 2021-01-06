@@ -25,8 +25,11 @@ class Schoolfees extends CI_Controller
 	public function displayPending_sf()
 	{
 		$pending_id = $this->input->post('pending_id');
+		$data = $this->apirequestModel->request_api();
+		$singledata = array_search($pending_id, $data);
+		echo  $singledata;
 
-		if ($this->schoolfeesModel->displayscf_pending($pending_id)) {
+		if ($singledata) {
 
 			$pending = $this->schoolfeesModel->displayscf_pending($pending_id);
 			serialize($pending);
@@ -79,6 +82,7 @@ class Schoolfees extends CI_Controller
 	public function get_transaction()
 	{
 		$data = $this->apirequestModel->request_api();
+		$dataID = $this->schoolfeesModel->compare_in_data();
 		if ($data) {
 			echo "<table id='example1' class='table table-bordered table-striped'>";
 		  echo "
