@@ -18,12 +18,12 @@
         <!-- /.box-header -->
         <div class="box-body">
           <form class="" action="schoolfees/updateSchoolfees" enctype="multipart/form-data" method="post">
-            <?php $pending = unserialize($_GET['pending_id']); foreach ($pending as $key => $value) { ?>
+            <?php $pending = unserialize($_GET['pending_id']); foreach ($pending as $key => $value) { $value = (Array)$value;?>
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Roll Number</label>
-                  <input type="text" class="form-control" name="reason" id="exampleInputEmail1" value="<?php echo $value['reason'];?>">
+                  <input type="text" class="form-control" name="reason" id="exampleInputEmail1" value="<?php echo $value['reason']; ?>">
                 </div>
                 <div class="form-group">
                   <label>Class</label>
@@ -84,18 +84,18 @@
                 </div>
               </div>
             </div>
-            <?php } ?>
             <div class="row">
             <div class="col-md-3">
               <span class="input-group-btn">
                  <button type="submit" class="btn btn-primary">Approve</button>
-                 <input type="text" name="pending" hidden value="<?php echo $value['id'];?>">
+                 <input type="text" name="transactionID" hidden value="<?php echo $value['id'];?>">
               </span>
               <span class="input-group-btn">
                  <button type="button" class="btn btn-danger" style="background:#ba575b;">Cancel</button>
               </span>
             </div>
           </div>
+          <?php } ?>
           </form>
         </div>
       </div>

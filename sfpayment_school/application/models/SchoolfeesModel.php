@@ -27,10 +27,9 @@ class SchoolfeesModel extends CI_Model
 		return ($result == true ? true : false);
 	}
 
-	public function update_pending_scf($pending_id, $pending_payment)
+	public function update_pending_scf($pending_payment)
 	{
-		$this->db->where('id', $pending_id);
-		$update = $this->db->update('school_fees', $pending_payment);
+		$update = $this->db->insert('school_fees', $pending_payment);
 		return ($update == true ? true : false);
 	}
 
@@ -61,17 +60,10 @@ class SchoolfeesModel extends CI_Model
 		return $sql->result_array();
 	}
 
-	public function displayscf_pending($pending_id)
-	{
-		$query = "SELECT * FROM school_fees WHERE status = 0 AND id = $pending_id";
-		$sql = $this->db->query($query);
-		return $sql->result_array();
-	}
-
 
 	public function displayscf_approved()
 	{
-		$query = "SELECT * FROM school_fees WHERE status = 1";
+		$query = "SELECT * FROM school_fees";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}

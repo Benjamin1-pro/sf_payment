@@ -27,6 +27,7 @@ try {
     $paylod = [
       'iat' => time(),
       'iss' => 'localhost',
+      'exp' => time() + (86400), //24 hours
       'kyc_id' => $transaction['kyc_id']
     ];
     $token =JWT::encode($paylod, SECRET_KEY);
@@ -41,20 +42,39 @@ try {
   public function getCustomerDetails(){
     $kyc_id = $this->kyc_id;
     $accNumber = $this->account_number;
-    // $accNumber = $this->validateParameter('accNumber', $this->param['accNumber'], STRING);
+    $status = "pending";
+
     // select all query
-    $info = "SELECT * FROM transactions WHERE account_number = :accNumber";
+    $info = "SELECT * FROM transactions WHERE account_number = :accNumber AND status = :status";
     $sql = $this->dbConnect->prepare($info);
     $sql->bindParam(":accNumber", $accNumber);
+    $sql->bindParam(":status", $status);
     $sql->execute();
-    // $result = $sql->fetch(PDO::FETCH_ASSOC);
+
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
       $response[] = $row;
-      // $this->returnResponse(SUCCESS_RESPONSE, $response);
     }
     $this->returnResponse(SUCCESS_RESPONSE, $response);
     if (!is_array($response)) {
       $this->returnResponse(SUCCESS_RESPONSE, ['message' => 'transaction details are not found in database']);
+    }
+  }
+
+  public function update_transaction_status()
+  {
+    $status = $this->validateParameter('status', $this->param['status'], STRING, false);
+    $transactionID = $this->validateParameter('status', $this->param['transactionID'], INTEGER, false);
+
+    $sql = "UPDATE transactions SET status = :status WHERE id = :transactionID";
+    $query = $this->dbConnect->prepare($sql);
+    $query->bindParam(":status", $status);
+    $query->bindParam(":transactionID", $transactionID);
+    $result = $query->execute();
+    if ($result) {
+      echo "status updated successfully!";
+    }
+    else {
+      echo "there was an error please try again later";
     }
   }
 }

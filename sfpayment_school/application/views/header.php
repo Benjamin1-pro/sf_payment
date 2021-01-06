@@ -156,12 +156,6 @@
          </li>
          <li class="treeview">
            <a href="#">
-             <i class="fa fa-files-o"></i>
-               <span>API Subscription</span>
-           </a>
-         </li>
-         <li class="treeview">
-           <a href="#">
              <i class="fa fa-pie-chart"></i>
              <span>Payment</span>
              <span class="pull-right-container">

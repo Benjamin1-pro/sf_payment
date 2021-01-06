@@ -14,7 +14,7 @@
       {
         $("#transaction_list").load("curlss.php");
         refresh();
-      }, 2000);
+      }, 200);
     });
     </script>
   </body>

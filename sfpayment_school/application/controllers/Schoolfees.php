@@ -26,20 +26,28 @@ class Schoolfees extends CI_Controller
 	{
 		$pending_id = $this->input->post('pending_id');
 		$data = $this->apirequestModel->request_api();
-		$singledata = array_search($pending_id, $data);
-		echo  $singledata;
+		$data = (Array)$data;
+		$returnResults = array();
+		// $singledata = $data->id;
+		 // $singledata = "SELECT * FROM $data WHERE id = $pending_id";
+		 foreach ($data as $key => $value) {
+				$ids[] = $value->id;
+				if ($value->id  == $pending_id) {
+					$returnResults[] = $value;
+				}
+		 }
+		print_r($returnResults);
 
-		if ($singledata) {
+		if ($returnResults) {
 
-			$pending = $this->schoolfeesModel->displayscf_pending($pending_id);
-			serialize($pending);
-			redirect(site_url('../../deposit_slip?pending_id='.''.serialize($pending)));
+			serialize($returnResults);
+			redirect(site_url('../../deposit_slip?pending_id='.''.serialize($returnResults)));
 		}
 	}
 
 	public function updateSchoolfees()
 	{
-		$pending_id = $this->input->post('pending');
+		$pending_id = $this->input->post('transactionID');
 		$roll_number = $this->input->post('reason');
 		$current_amount = $this->input->post('amount');
 		$student_info = $this->schoolfeesModel->prev_amount($roll_number);
@@ -62,16 +70,21 @@ class Schoolfees extends CI_Controller
 		$update_approved = array(
 			'amount_paid' => $amount
 		);
-		if ($this->schoolfeesModel->update_pending_scf($pending_id, $pending_payment)) {
+		if ($this->schoolfeesModel->update_pending_scf($pending_payment)) {
 
 				$studentID = $value['id'];
 				$student_id = (int)$studentID;
+				if ($this->apirequestModel->update_transactionID($pending_id)) {
 				if ($this->schoolfeesModel->update_students_scf($student_id, $update_approved)) {
 					redirect(site_url('../../payment'));
 				}else {
 					$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
 					redirect(site_url('../../deposit_slip'));
 				}
+			}else {
+				$this->session->set_flashdata('error', '<i style="color:red;">An error occured on API side, please try again!</i>');
+				redirect(site_url('../../payment'));
+			}
 		}else {
 			$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
 			redirect(site_url('../../deposit_slip'));

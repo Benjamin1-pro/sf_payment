@@ -27,8 +27,7 @@
                 <tr>
                   <th>#</th>
                   <th>Account Name</th>
-                  <th>API Name </th>
-                  <th>API Key</th>
+                  <th>Client ID</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -42,8 +41,7 @@ foreach ($query as $key => $value1) : ?>
                 <tr>
                   <td><?php echo $count; ?></td>
                   <td><?php echo $value1['account_name'];?></td>
-                  <td><?php echo $value['api_name'];?></td>
-                  <td><?php echo $value['api_key'];?></td>
+                  <td><?php echo $value['random_string'];?></td>
                   <td>
                     <div class="btn-group">
                       <button type="button" class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown">Action</button>
@@ -69,6 +67,7 @@ foreach ($query as $key => $value1) : ?>
                              <p><i><strong>Notice : </strong> The Api Key will be generated automatically!</i></p>
                              <input type="text" name="api_key_id" hidden value="<?php echo $value['id'];?>">
                              <input type="text" hidden name="account_number" value="<?php echo $value1['account_number'];?>">
+                             <input type="text" hidden name="random_key" value="<?php echo $value['random_string'];?>">
                            </div>
                       </div>
                       <center>
@@ -144,6 +143,11 @@ foreach ($query as $key => $value1) : ?>
                   <div class="form-group">
                     <label for="account_number">Account Number</label>
                     <input type="text" name="account_number" id="show_accountnumber" class="form-control" id="account_number" placeholder="Account Number">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="account_number">Client Email</label>
+                    <input type="text" name="client_email" class="form-control" placeholder="Enter Client's Email">
                   </div>
                 </div>
             </div>

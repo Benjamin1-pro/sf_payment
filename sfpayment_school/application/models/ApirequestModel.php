@@ -3,6 +3,7 @@
 class ApirequestModel extends CI_Model
 {
 
+	public $token;
 	public function request_api()
 	{
 		// Initializes a new cURL session
@@ -29,7 +30,7 @@ class ApirequestModel extends CI_Model
 			$Ar = $result->Response;
 			$Ar =  (Array) $Ar;
 			$token = ($Ar[0]->token);
-			// $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDkzOTI1MTQsImlzcyI6ImxvY2FsaG9zdCIsImt5Y19pZCI6IjEifQ.4GMY9_dvYHxy0BbOTwUn9JOA8d2i9wNTMeUs3tfkkkU";
+			$this->token = $token;
 			// Close cURL session
 			curl_close($curl);
 
@@ -80,4 +81,42 @@ class ApirequestModel extends CI_Model
 		// Close cURL session
 		curl_close($curl);
 	}
+
+	public function update_transactionID($pending_id)
+	{
+		$curl = curl_init();
+		$status = "Approved";
+		$transactionID = $pending_id;
+		$token = $this->request_api();
+		$token = $this->token;
+		$data = '{
+							 "name":"update_transaction_status",
+							 "param":{
+													"status":"'.$status.'",
+													"transactionID":"'.$transactionID.'"
+											 }
+						}';
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => "http://localhost/project/transaction_api/",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS =>$data,
+			CURLOPT_HTTPHEADER => array(
+				"Content-Type: application/json",
+				"Authorization: Bearer $token"
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo "response sent";
+
+	}
+
 }

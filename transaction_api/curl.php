@@ -1,11 +1,10 @@
 <?php
   class Transaction
   {
+    public $token;
 
     function fetchtransactionn()
     {
-      // code...
-
     // Initializes a new cURL session
     $curl = curl_init();
 		$data = '{
@@ -30,6 +29,7 @@
       $Ar = $result->Response;
       $Ar =  (Array) $Ar;
       $token = ($Ar[0]->token);
+      $this->token = $token;
 
       // Close cURL session
       curl_close($curl);
@@ -56,7 +56,7 @@
         CURLOPT_CUSTOMREQUEST => "POST",
         CURLOPT_POSTFIELDS => $request,
         CURLOPT_HTTPHEADER => array(
-          "authorization: Bearer $token",
+          "authorization: Bearer $this->token",
           "content-type: application/json"
         ),
       ));
@@ -74,7 +74,7 @@
         $request = (Array)($Array2[0]);
         $request = array($request);
         $request = $request['0'];
-        // print_r($request);
+        //print_r($request);
       }
     }
 
@@ -82,4 +82,41 @@
 		curl_close($curl);
     return $request;
   }
+
+  public function update_transactionID()
+    {
+      $curl = curl_init();
+      $status = "pending";
+      $transactionID = "2";
+      $token = $this->fetchtransactionn();
+      $token = $this->token;
+      $data = '{
+                 "name":"update_transaction_status",
+                 "param":{
+                            "status":"'.$status.'",
+                            "transactionID":"'.$transactionID.'"
+                         }
+              }';
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "http://localhost/project/transaction_api/",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS =>$data,
+        CURLOPT_HTTPHEADER => array(
+          "Content-Type: application/json",
+          "Authorization: Bearer $token"
+        ),
+      ));
+
+      $response = curl_exec($curl);
+
+      curl_close($curl);
+      echo "response sent";
+
+    }
   }

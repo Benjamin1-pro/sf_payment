@@ -11,9 +11,10 @@ class bankModel extends CI_Model
 			'bankslip_number' => $this->input->post('bankslip_number'),
 			'account_number' => $this->input->post('account_number'),
 			'account_name' => $this->input->post('account_name'),
+			'bank_name' => $this->input->post('bank_name'),
 			'reason' => $this->input->post('reason'),
 			'payment_date' =>$this->input->post('payment_date'),
-			'status' => 1
+			'status' => 'pending'
 		);
 
 		$result = $this->db->insert('transactions', $deposit);
@@ -34,7 +35,7 @@ class bankModel extends CI_Model
 		return $sql->result_array();
 	}
 
-	public function api_provider($api_key, $random_key, $api_name, $account_number)
+	public function api_provider($api_key, $random_key, $api_name, $account_number,$email)
 	{
 		$kyc_query = "SELECT id FROM kyc WHERE account_number = ?";
 		$kycs_id = $this->db->query($kyc_query, $account_number);
@@ -50,6 +51,7 @@ class bankModel extends CI_Model
 			'api_key'	=> $api_key,
 			'random_string' => $random_key,
 			'api_name' => $api_name,
+			'email' => $email,
 			'added_by'	=> $staff_id,
 			'c_date' => date(DATE_RFC1036, time())
 		);
@@ -86,7 +88,7 @@ class bankModel extends CI_Model
 		return $sql->result_array();
 	}
 
-	public function api_update($api_key, $random_key, $api_name, $account_number, $apiKey)
+	public function api_update($api_key, $random_key, $api_name, $account_number, $apiKey, $email)
 	{
 		$kyc_query = "SELECT id FROM kyc WHERE account_number = ?";
 		$kycs_id = $this->db->query($kyc_query, $account_number);
@@ -102,6 +104,7 @@ class bankModel extends CI_Model
 			'api_key'	=> $api_key,
 			'random_string' => $random_key,
 			'api_name' => $api_name,
+			'email' => $email,
 			'added_by'	=> $staff_id,
 			'c_date' => date(DATE_RFC1036, time())
 		);
