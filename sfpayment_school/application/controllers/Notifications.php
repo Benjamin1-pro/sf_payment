@@ -11,7 +11,7 @@ class Notifications extends CI_Controller
 
   public function viewStatus()
   {
-    $datas = $this->apirequestModel->curl_request();
+    $datas = $this->apirequestModel->curl_request('equitybank');
     if (count($datas)>0) {
       foreach ($datas as $key => $value) {
         $output =  '

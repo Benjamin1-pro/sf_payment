@@ -20,8 +20,11 @@
           <form class="" action="schoolfees/updateSchoolfees" enctype="multipart/form-data" method="post">
 <?php
   $this->load->model('apirequestModel');
-  $pending_id = base64_decode($_GET['id']);
-  $data = $this->apirequestModel->curl_request_singleData($pending_id);
+  $data = base64_decode($_GET['id']);
+  $data = explode(".",$data);
+  $pending_id = $data[0];
+  $bank_name = $data[1];
+  $data = $this->apirequestModel->curl_request_singleData($pending_id, $bank_name);
   foreach ($data as $key => $value) { $value = (Array)$value;
     $roll_number = $value['reason'];
     $query = "SELECT * FROM students WHERE roll_number = ?";
@@ -102,9 +105,10 @@
             <div class="col-md-3">
               <span class="input-group-btn">
                  <button type="submit" class="btn btn-primary">Approve</button>
-                 <input type="text" name="transactionID" hidden  value="<?php echo $value['id'];?>">
-                 <input type="text" name="phone_number"  hidden value="<?php echo $mobileno; ?>">
-                 <input type="text" name="student_names" hidden value="<?php echo $studentName; ?>">
+                 <input type="text" name="transactionID" hidden  value="<?php  echo $value['id'];?>">
+                 <input type="text" name="phone_number"  hidden  value="<?php  echo $mobileno; ?>">
+                 <input type="text" name="student_names" hidden  value="<?php  echo $studentName; ?>">
+                 <input type="text" name="bank_name"     hidden  value="<?php echo $bank_name;?>">
               </span>
               <span class="input-group-btn">
                  <button type="button" class="btn btn-danger" style="background:#ba575b;">Cancel</button>

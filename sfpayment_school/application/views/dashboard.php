@@ -11,6 +11,10 @@
          <li class="active">Dashboard</li>
        </ol>
      </section>
+     <?php $this->load->model('constants');
+     $data = $this->constants->api_credentials();
+     print_r(count($data['equitybank']));
+      ?>
      <!-- Main content -->
      <section class="content">
        <!-- Small boxes (Stat box) -->

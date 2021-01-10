@@ -8,6 +8,7 @@ class Schoolfees extends CI_Controller
 		$this->load->model('schoolfeesModel');
 		$this->load->model('apirequestModel');
 		$this->load->model('sendsms');
+		$this->load->model('curlRequest');
 	}
 
 	public function addSchoolfees()
@@ -26,10 +27,12 @@ class Schoolfees extends CI_Controller
 	public function displayPending_sf()
 	{
 		$pending_id = $this->input->post('pending_id');
+		$bank_name = $this->input->post('bank_name');
 		if ($pending_id) {
 			//print_r($data);
-			$pending_id = base64_encode($pending_id);
-			redirect(site_url('../../deposit_slip?id='.$pending_id.''));
+			$data = base64_encode($pending_id.'.'.$bank_name);
+
+			redirect(site_url('../../deposit_slip?id='.$data.''));
 		}
 		else {
 			echo 'data not found';
@@ -46,7 +49,7 @@ class Schoolfees extends CI_Controller
 
 		$mobileno = $this->input->post('phone_number');
 		$studentName = $this->input->post('student_names');
-		$message = "Dear ".$studentName." Student , your payment of ".$current_amount." Rwf done @ ".$bank_name." has been approved , ULK Finance";
+		$message = "Dear ".$studentName.", your payment of ".$current_amount." Rwf done @ ".$bank_name." has been approved , ULK Finance";
 
 		foreach ($student_info as $key => $value) {
 
@@ -70,7 +73,7 @@ class Schoolfees extends CI_Controller
 
 				$studentID = $value['id'];
 				$student_id = (int)$studentID;
-				if ($this->apirequestModel->update_transactionStatus($pending_id)) {
+				if ($this->apirequestModel->update_transactionStatus($pending_id, $bank_name)) {
 					if ($this->schoolfeesModel->update_students_scf($student_id, $update_approved)) {
 						if ($this->sendsms->sendsmsFunction($message, $mobileno)) {
 								redirect(site_url('../../payment'));
@@ -99,8 +102,10 @@ class Schoolfees extends CI_Controller
 		if (isset($_GET['bank'])) {
 			$bank_name = $_GET['bank'];
 		}
+		$bank_name = strtolower($bank_name);
+		$bank_name = str_replace(' ', '', $bank_name);
 		// $bank_name = "Equity Bank";
-		$data = $this->apirequestModel->curl_request();
+		$data = $this->apirequestModel->curl_request($bank_name);
 			echo "<table id='example1' class='table table-bordered table-striped'>";
 		  echo "
 		  <thead>
@@ -116,37 +121,31 @@ class Schoolfees extends CI_Controller
 		      <th>Action</th>
 		      </tr>
 		  </thead>";
+			// echo $bank_name;
 			if ($data) {
 			  $count = 1;
-				$result1 = array();
-				$data = (Array)$data;
-			  foreach ($data as $key => $value) {
-					$bankname[] = $value->bank_name;
-					if ($value->bank_name  == $bank_name) {
-						$value = (Array)$value;
-						$result1[] = $value;
-						$result = $result1['0'];
+			  foreach ($data as $key => $value) { $value = (Array)$value;
 				    echo "
 				      <tbody>
 				        <tr>
 				          <td>".$count++."</td>
-				          <td>".$result['account_number']."</td>
-									<td>".$result['account_name']."</td>
-									<td>".$result['bank_name']."</td>
-				          <td>".$result['bankslip_number']."</td>
-				          <td>".$result['amount']."</td>
-				          <td>".$result['reason']."</td>
-				          <td>".$result['payment_date']."</td>
+				          <td>".$value['account_number']."</td>
+									<td>".$value['account_name']."</td>
+									<td>".$value['bank_name']."</td>
+				          <td>".$value['bankslip_number']."</td>
+				          <td>".$value['amount']."</td>
+				          <td>".$value['reason']."</td>
+				          <td>".$value['payment_date']."</td>
 				          <td>
 				            <form class='' action='schoolfees/displayPending_sf' method='post'>
-				              <input type='text' name='pending_id' hidden value='".$result['id']."'>
+				              <input type='text' name='pending_id' hidden value='".$value['id']."'>
+											<input type='text' name='bank_name' hidden value='".$bank_name."'>
 				              <button type='submit' class='btn btn-success btn-xs'>approve</button>
 				            </form>
 				        </td>
 				        </tr>
 				      </tbody>
 				    ";
-				  }
 				}
 		  echo "</table>";
 		}

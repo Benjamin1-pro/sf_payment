@@ -55,7 +55,11 @@ $(document).ready(function(){
       url:"schoolfees/get_transaction?bank="+bank,
       method:"get",
       success:function(data){
-        $('#transaction_lists').html(data);
+        setInterval(function(){
+          $('#transaction_lists').html(data);
+          refresh();
+        },1000);
+
       }
     });
   });

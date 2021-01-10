@@ -8,26 +8,28 @@ class CurlRequest extends CI_Model
 		$this->load->model('constants');
 	}
 
-  function curl_request($pending_id = null, $transactionID = null)
+  function curl_request($pending_id = null, $transactionID = null, $bank_name = null)
   {	// Initializes a new cURL session
     $curl = curl_init();
     $credentials = $this->constants->api_credentials();
-    $credentials = $credentials['equity'];
-    $api_name = $credentials['api_name'];
-    $clientID = $credentials['account_id'];
-    $api_key = $credentials['api_key'];
-    $endpoint = $credentials['endpoints'];
-    $endpoint = $endpoint['private'];
+    if ($bank_name) {
+        if (!empty($credentials["$bank_name"])) {
+          $credentials  = $credentials["$bank_name"];
+          $api_name     = $credentials['api_name'];
+          $clientID     = $credentials['account_id'];
+          $api_key      = $credentials['api_key'];
+          $endpoint     = $credentials['endpoints'];
+          $endpoints    = $endpoint['private'];
+          $data         = '{
+                    	       "name":"'.$api_name.'",
+                    	       "param":
+                                      {
+                                        "clientID":"'.$clientID.'",
+                                        "api_key":"'.$api_key.'"
+                    	                }
+                          }';
 
-		$data = '{
-              	"name":"'.$api_name.'",
-              	"param":{
-                  "clientID":"'.$clientID.'",
-                  "api_key":"'.$api_key.'"
-              			}
-              }';
-
-		curl_setopt($curl, CURLOPT_URL, "".$endpoint."");
+		curl_setopt($curl, CURLOPT_URL, "".$endpoints."");
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['content-type: application/json']);
@@ -38,13 +40,13 @@ class CurlRequest extends CI_Model
       echo 'Curl Error: ' . $error;
     }else {
 
-      $result = json_decode($response);
+      $result       = json_decode($response);
 
-      $result = (Array)$result;
-      $result = (Array)$result['message'];
-      $result = $result['token'];
-      $token = $result;
-      $this->token = $token;
+      $result       = (Array)$result;
+      $result       = (Array)$result['message'];
+      $result       = $result['token'];
+      $token        = $result;
+      $this->token  = $token;
       // Close cURL session
       curl_close($curl);
 
@@ -52,9 +54,9 @@ class CurlRequest extends CI_Model
       //Call second web service
       $curl = curl_init();
       if ($pending_id) {
-        curl_setopt($curl, CURLOPT_URL, "".$endpoint."".$pending_id."");
+        curl_setopt($curl, CURLOPT_URL, "".$endpoints."".$pending_id."");
       }else {
-        curl_setopt($curl, CURLOPT_URL, "".$endpoint."");
+        curl_setopt($curl, CURLOPT_URL, "".$endpoints."");
       }
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($curl, CURLOPT_ENCODING, "");
@@ -90,5 +92,10 @@ class CurlRequest extends CI_Model
 			// print_r($response);
 }
 			return $response;
+      }
+      else {
+        return false;
+      }
+    }
 	}
 }
