@@ -7,6 +7,7 @@ class Schoolfees extends CI_Controller
 		parent::__construct();
 		$this->load->model('schoolfeesModel');
 		$this->load->model('apirequestModel');
+		$this->load->model('sendsms');
 	}
 
 	public function addSchoolfees()
@@ -25,23 +26,13 @@ class Schoolfees extends CI_Controller
 	public function displayPending_sf()
 	{
 		$pending_id = $this->input->post('pending_id');
-		$data = $this->apirequestModel->request_api();
-		$data = (Array)$data;
-		$returnResults = array();
-		// $singledata = $data->id;
-		 // $singledata = "SELECT * FROM $data WHERE id = $pending_id";
-		 foreach ($data as $key => $value) {
-				$ids[] = $value->id;
-				if ($value->id  == $pending_id) {
-					$returnResults[] = $value;
-				}
-		 }
-		print_r($returnResults);
-
-		if ($returnResults) {
-
-			serialize($returnResults);
-			redirect(site_url('../../deposit_slip?pending_id='.''.serialize($returnResults)));
+		if ($pending_id) {
+			//print_r($data);
+			$pending_id = base64_encode($pending_id);
+			redirect(site_url('../../deposit_slip?id='.$pending_id.''));
+		}
+		else {
+			echo 'data not found';
 		}
 	}
 
@@ -50,7 +41,12 @@ class Schoolfees extends CI_Controller
 		$pending_id = $this->input->post('transactionID');
 		$roll_number = $this->input->post('reason');
 		$current_amount = $this->input->post('amount');
+		$bank_name = $this->input->post('bank_name');
 		$student_info = $this->schoolfeesModel->prev_amount($roll_number);
+
+		$mobileno = $this->input->post('phone_number');
+		$studentName = $this->input->post('student_names');
+		$message = "Dear ".$studentName." Student , your payment of ".$current_amount." Rwf done @ ".$bank_name." has been approved , ULK Finance";
 
 		foreach ($student_info as $key => $value) {
 
@@ -74,13 +70,19 @@ class Schoolfees extends CI_Controller
 
 				$studentID = $value['id'];
 				$student_id = (int)$studentID;
-				if ($this->apirequestModel->update_transactionID($pending_id)) {
-				if ($this->schoolfeesModel->update_students_scf($student_id, $update_approved)) {
-					redirect(site_url('../../payment'));
-				}else {
-					$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
-					redirect(site_url('../../deposit_slip'));
-				}
+				if ($this->apirequestModel->update_transactionStatus($pending_id)) {
+					if ($this->schoolfeesModel->update_students_scf($student_id, $update_approved)) {
+						if ($this->sendsms->sendsmsFunction($message, $mobileno)) {
+								redirect(site_url('../../payment'));
+						}
+						else {
+							$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
+							redirect(site_url('../../payment'));
+						}
+					}else {
+						$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
+						redirect(site_url('../../deposit_slip'));
+					}
 			}else {
 				$this->session->set_flashdata('error', '<i style="color:red;">An error occured on API side, please try again!</i>');
 				redirect(site_url('../../payment'));
@@ -94,16 +96,19 @@ class Schoolfees extends CI_Controller
 
 	public function get_transaction()
 	{
-		$data = $this->apirequestModel->request_api();
-		$dataID = $this->schoolfeesModel->compare_in_data();
-		if ($data) {
+		if (isset($_GET['bank'])) {
+			$bank_name = $_GET['bank'];
+		}
+		// $bank_name = "Equity Bank";
+		$data = $this->apirequestModel->curl_request();
 			echo "<table id='example1' class='table table-bordered table-striped'>";
 		  echo "
 		  <thead>
 		    <tr>
 		      <th>#</th>
 		      <th>Account Number</th>
-		      <th>Bank Name</th>
+		      <th>Account Name</th>
+					<th>Bank Name</th>
 		      <th>Bank Sleep Number</th>
 		      <th>Amount</th>
 		      <th>Reason</th>
@@ -111,32 +116,48 @@ class Schoolfees extends CI_Controller
 		      <th>Action</th>
 		      </tr>
 		  </thead>";
-		  $count = 1;
-		  foreach ($data as $key => $value) { $value = (Array)$value;
-		    echo "
-		      <tbody>
-		        <tr>
-		          <td>".$count++."</td>
-		          <td>".$value['account_number']."</td>
-		          <td>".$value['account_name']."</td>
-		          <td>".$value['bankslip_number']."</td>
-		          <td>".$value['amount']."</td>
-		          <td>".$value['reason']."</td>
-		          <td>".$value['payment_date']."</td>
-		          <td>
-		            <form class='' action='schoolfees/displayPending_sf' method='post'>
-		              <input type='text' name='pending_id' hidden value='".$value['id']."'>
-		              <button type='submit' class='btn btn-success btn-xs'>approve</button>
-		            </form>
-		        </td>
-		        </tr>
-		      </tbody>
-		    ";
-		  }
+			if ($data) {
+			  $count = 1;
+				$result1 = array();
+				$data = (Array)$data;
+			  foreach ($data as $key => $value) {
+					$bankname[] = $value->bank_name;
+					if ($value->bank_name  == $bank_name) {
+						$value = (Array)$value;
+						$result1[] = $value;
+						$result = $result1['0'];
+				    echo "
+				      <tbody>
+				        <tr>
+				          <td>".$count++."</td>
+				          <td>".$result['account_number']."</td>
+									<td>".$result['account_name']."</td>
+									<td>".$result['bank_name']."</td>
+				          <td>".$result['bankslip_number']."</td>
+				          <td>".$result['amount']."</td>
+				          <td>".$result['reason']."</td>
+				          <td>".$result['payment_date']."</td>
+				          <td>
+				            <form class='' action='schoolfees/displayPending_sf' method='post'>
+				              <input type='text' name='pending_id' hidden value='".$result['id']."'>
+				              <button type='submit' class='btn btn-success btn-xs'>approve</button>
+				            </form>
+				        </td>
+				        </tr>
+				      </tbody>
+				    ";
+				  }
+				}
 		  echo "</table>";
 		}
 		else {
-			echo "0 result";
+			echo 	"
+							<tbody>
+								<tr>
+									<td colspan = '9' style = 'text-align:center'>No Data found in the Table.</td>
+								</tr>
+							</tbody>
+						";
 		}
 	}
 }

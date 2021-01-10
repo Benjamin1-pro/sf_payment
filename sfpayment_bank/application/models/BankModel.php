@@ -14,7 +14,7 @@ class bankModel extends CI_Model
 			'bank_name' => $this->input->post('bank_name'),
 			'reason' => $this->input->post('reason'),
 			'payment_date' =>$this->input->post('payment_date'),
-			'status' => 'pending'
+			'status' => 'Pending'
 		);
 
 		$result = $this->db->insert('transactions', $deposit);
@@ -30,7 +30,7 @@ class bankModel extends CI_Model
 
 	public function transactionlist()
 	{
-		$query = "SELECT * FROM transactions WHERE status = 1";
+		$query = "SELECT * FROM transactions";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}

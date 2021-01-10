@@ -7,6 +7,7 @@ class Bank extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('bankModel');
+		$this->load->library('email');
 	}
 
 	public function depositslip_bank()
@@ -40,7 +41,6 @@ class Bank extends CI_Controller
 
 	public function generate_api_key()
 	{
-		$this->load->library('email');
 		$api_name = 'transaction list updated';
 		$account_number = $this->input->post('account_number');
 		$email = $this->input->post('client_email');
@@ -58,41 +58,41 @@ class Bank extends CI_Controller
 		 if (!$this->bankModel->kyc_exist($account_number)) {
 			 if ($this->bankModel->api_provider($api_key, $random_key, $api_name, $account_number,$email)) {
 
-				 $config = array();
-				$config['protocol'] = 'smtp';
-				$config['smtp_host'] = 'smtp.gmail.com';
-				$config['smtp_user'] = 'muthamubenjamin@gmail.com';
-				$config['smtp_pass'] = 'benjaminmu..236265';
-				$config['smtp_port'] = 465;
-				$config['smtp_crypto'] = 'ssl';
-				$config['mailtype'] = 'text';
-				$config['smtp_timeout'] = '5';
-				$config['charset'] = 'iso-8859-1';
-				$config['wordwrap'] = true;
+				 	$config = array();
+					$config['protocol'] = 'smtp';
+					$config['smtp_host'] = 'smtp.gmail.com';
+					$config['smtp_user'] = 'acountfortraining@gmail.com';
+					$config['smtp_pass'] = 'acountfortraining123';
+					$config['smtp_port'] = 465;
+					$config['smtp_crypto'] = 'ssl';
+					$config['mailtype'] = 'text';
+					$config['smtp_timeout'] = '5';
+					$config['charset'] = 'iso-8859-1';
+					$config['wordwrap'] = true;
 
-				$this->email->initialize($config);
-				$this->email->set_newline("\r\n");
+					$this->email->initialize($config);
+					$this->email->set_newline("\r\n");
 
-				$this->email->from('muthamubenjamin@gmail.com');
-				$this->email->to($email);
-				$this->email->subject('Your API Key From Sf-Payment');
-				$this->email->message('Hi there! Your API Key is: '.$api_key.', Account-ID is: '.$random_key.' The Endpoints are: Public: sfpayment.com, Private: '.$private_endpoint.'.');
+					$this->email->from('muthamubenjamin@gmail.com');
+					$this->email->to($email);
+					$this->email->subject('Your API Key From Sf-Payment');
+					$this->email->message('Hi there! Your API Key is: '.$api_key.', Account-ID is: '.$random_key.' The Endpoints are: Public: sfpayment.com, Private: '.$private_endpoint.'.');
 
 				// $this->email->send();
-				if ($this->email->send()) {
-					$this->session->set_flashdata('error', '<i style="color:green;">The deposit has been approved successfully!</i>');
- 	 			 redirect(site_url('../../api_subscription'));
-			 }
-			 else {
-				 $this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
- 				redirect(site_url('../../api_subscriptionssss'));
-			 }
-			 }
-			 else {
-				 $this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
-	 			 redirect(site_url('../../api_subscription'));
-			 }
-		 }else {
+					if ($this->email->send()) {
+						$this->session->set_flashdata('error', '<i style="color:green;">The deposit has been approved successfully!</i>');
+	 	 			 redirect(site_url('../../api_subscription'));
+					 }
+					 else {
+						 $this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
+		 				redirect(site_url('../../api_subscription'));
+					 }
+				 }
+				 else {
+					 $this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
+		 			 redirect(site_url('../../api_subscription'));
+				 }
+			 }else {
 			 $this->session->set_flashdata('error', '<i style="color:red;">An API KEY has been already assigned to this client!</i>');
  		 	 redirect(site_url('../../api_subscription'));
 		 }
@@ -103,7 +103,12 @@ class Bank extends CI_Controller
 		$api_name = 'transaction list updated';
 		$account_number = $this->input->post('account_number');
 		$apiKey = $this->input->post('api_key_id');
-		$email = $this->input->post('client_email');
+		$query = "SELECT email FROM api_keys WHERE id = ?";
+		$query = $this->db->query($query, $apiKey);
+		$query = $query->result_array();
+		foreach ($query as $key => $value) {
+			$email = $value['email'];
+		}
 		$private_endpoint = "http://{$_SERVER['HTTP_HOST']}";
 
    // Generates a random string of ten digits
@@ -117,32 +122,37 @@ class Bank extends CI_Controller
 
 
 			 if ($this->bankModel->api_update($api_key, $random_key, $api_name, $account_number, $apiKey,$email)) {
-				 $this->session->set_flashdata('error', '<i style="color:green;">The Api Key Has been updated successfully!</i>');
 
-				 $config = array();
-				$config['protocol'] = 'smtp';
-				$config['smtp_host'] = 'smtp.gmail.com';
-				$config['smtp_user'] = 'muthamubenjamin@gmail.com';
-				$config['smtp_pass'] = 'benjaminmu..236265';
-				$config['smtp_port'] = 465;
-				$config['smtp_crypto'] = 'ssl';
-				$config['mailtype'] = 'text';
-				$config['smtp_timeout'] = '5';
-				$config['charset'] = 'iso-8859-1';
-				$config['wordwrap'] = true;
+				 	$config = array();
+					$config['protocol'] = 'smtp';
+					$config['smtp_host'] = 'smtp.gmail.com';
+					$config['smtp_user'] = 'acountfortraining@gmail.com';
+					$config['smtp_pass'] = 'acountfortraining123';
+					$config['smtp_port'] = 465;
+					$config['smtp_crypto'] = 'ssl';
+					$config['mailtype'] = 'text';
+					$config['smtp_timeout'] = '5';
+					$config['charset'] = 'iso-8859-1';
+					$config['wordwrap'] = true;
 
-				$this->email->initialize($config);
-			$this->email->set_newline("\r\n");
+					$this->email->initialize($config);
+					$this->email->set_newline("\r\n");
 
-			$this->email->from('muthamubenjamin@gmail.com');
-			$this->email->to($email);
-			$this->email->subject('Your API Key From Sf-Payment');
-			$this->email->message('Hi there! \n Your API Key is: '.$api_key.',\n Account-ID is: '.$random_key.' The Endpoints are: Public: sfpayment.com, Private: '.$private_endpoint.'.');
+					$this->email->from('muthamubenjamin@gmail.com');
+					$this->email->to($email);
+					$this->email->subject('Your API Key From Sf-Payment');
+					$this->email->message('Hi there! \n Your new API Key is: '.$api_key.',\n Account-ID is: '.$random_key.' The Endpoints are: Public: sfpayment.com, Private: '.$private_endpoint.'.');
 
-			$this->email->send();
-	 		redirect(site_url('../../api_subscription'));
-			 }
-			 else {
+					$send =  $this->email->send();
+					if ($send) {
+						$this->session->set_flashdata('error', '<i style="color:green;">The Api Key Has been updated successfully!</i>');
+				 		redirect(site_url('../../api_subscription'));
+					}else {
+						$this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
+	 	 			 redirect(site_url('../../api_subscription'));
+					}
+				}
+			 	else {
 				 $this->session->set_flashdata('error', '<i style="color:red;">An error occured, please try again!</i>');
 	 			 redirect(site_url('../../api_subscription'));
 			 }

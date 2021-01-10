@@ -24,6 +24,7 @@
                   <th>Roll Number</th>
                   <th>Names</th>
                   <th>Class</th>
+                  <th>Telephone</th>
                   <th>Amount Paid</th>
                 </tr>
                 </thead>
@@ -34,6 +35,7 @@
                   <td><?php echo $value['roll_number'];?></td>
                   <td><?php echo $value['fname'].' '.$value['lname'];?></td>
                   <td><?php echo $value['class'];?></td>
+                  <td><?php echo $value['telephone'];?></td>
                   <td><?php echo $value['amount_paid'];?></td>
                 </tr>
                 <?php } ?>

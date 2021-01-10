@@ -24,4 +24,6 @@ define('SUCCESS_RESPONSE',              200);
 // Server errors
 define('AUTHORIZATION_HEADER_NOT_FOUND',300);
 define('ACCESS_TOKEN_ERRORS',           301);
+define('BAD_REQUEST',                   400);
+define('SERVER_ERROR',                  500);
 ?>

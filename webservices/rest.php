@@ -6,18 +6,27 @@ class Rest
   protected $request;
   protected $serviceName;
   protected $param;
+  protected $transactionID;
   protected $dbConnect;
+  public $apiversion;
+  public $ressource;
+  public $ressource_id;
   public $kyc_id;
+  public $clientID;
+  public $token;
   public $account_number;
 
   public function __construct()
   {
     $db = new Database();
     $this->dbConnect = $db->getConnection();
+    $this->apiversion = $_GET['version'];
+    $this->ressource = $_GET['request'];
 
-    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-      $this->throwError(REQUEST_METHOD_NOT_VALID, 'Request Method is not valid');
+    if(isset($_GET['request_id'])){
+      $this->ressource_id = $_GET['request_id'];
     }
+
     $file = fopen('php://input', 'r');
     $this->request = stream_get_contents($file);
     $this->validateRequest($this->request);
@@ -33,25 +42,74 @@ class Rest
       $this->throwError(REQUEST_CONTETTYPE_NOT_VALID, 'Request content-type is not valid');
     }
     $data = json_decode($this->request, true);
-    if (!isset($data['name']) || $data['name'] == "") {
-      $this->throwError(API_NAME_REQUIRED, 'API Name required');
+    if (isset($data['name'])) {
+      $this->serviceName = $data['name'];
     }
-    $this->serviceName = $data['name'];
 
-    if (!is_array($data['param'])) {
-      $this->throwError(API_PARAM_REQUIRED, 'API Param is required');
+    if (isset($data['transactionID'])) {
+      $this->transactionID = $data['transactionID'];
     }
-    $this->param = $data['param'];
+    if (isset($data['param'])){
+      $this->param = $data['param'];
+    }
+
   }
+
+  public function version_ressource_validation()
+  {
+      switch ($this->apiversion) {
+        case 'v1':
+            switch ($this->ressource) {
+              case 'payments':
+
+                if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+                  if($this->ressource_id){
+                    $this->serviceName="getCustomerTransationsDetails";
+                  }
+                  else{
+                        $this->serviceName="getCustomerTransations";
+                  }
+                  $this->processApi();
+                }
+                elseif ($_SERVER['REQUEST_METHOD'] == 'PUT'){
+                  if($this->validateToken()){
+                    $this->serviceName="updateTransactionStatus";
+                    $this->processApi();
+                  }
+                  else{
+                        $this->returnResponse(ACCESS_TOKEN_ERRORS,'Access Denied');
+                 }
+                }
+                elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                  $this->serviceName="transactionListUpdated";
+                  $this->processApi();
+                }
+              break;
+              default:
+                  $this->returnResponse(BAD_REQUEST,'Ressource Not Found');
+                break;
+            }
+        break;
+        default:
+            $this->returnResponse(BAD_REQUEST,'Invalid API Version');
+        break;
+      }
+
+  }
+
 
   public function processApi()
   {
     $api = new API;
-    $rMethod = new reflectionMethod('API', $this->serviceName);
     if (!method_exists($api, $this->serviceName)) {
-      $this->throwError(API_DOES_NOT_EXIST, 'API does not exist');
+                    $this->returnResponse(BAD_REQUEST,'Bad request');
+    }else{
+
+      $rMethod = new reflectionMethod('API', $this->serviceName);
+      $rMethod->invoke($api);
     }
-    $rMethod->invoke($api);
+
   }
   public function validateParameter($fieldname, $value, $dataType, $required = true)
   {
@@ -89,15 +147,10 @@ class Rest
     echo $errorMsg; exit;
   }
 
-  public function returnResponse($code, $data)
+  public function returnResponse($code,$message,$data = array())
   {
     header("content-type: application/json");
-    $response = json_encode(['Response' => ['status'=>$code, $data]]);
-
-    // $Array = $response->Response;
-    // $Array =  (Array) $Array;
-    // $response = ($Array[0]);
-    // $request = (Array)($response);
+    $response = json_encode(['status'=>$code, 'message' => $message, 'count' => count($data), 'data' => $data]);
     echo $response; exit;
   }
 
@@ -136,18 +189,36 @@ class Rest
 
    try {
      $token = $this->getBearerToken();
-     $payload = JWT::decode($token, SECRET_KEY, ['HS256']);
-     $this->kyc_id = $payload->kyc_id;
 
-     $statement = $this->dbConnect->prepare("SELECT account_number FROM kyc WHERE id = :kyc_id");
-     $statement->bindParam(":kyc_id", $this->kyc_id);
+     $myData = base64_decode($token);
+     $myData = explode("::", $myData);
+
+     if(count($myData)!=2  ) return false;
+     $random_string = $myData[0];
+     $api_key = $myData[1];
+
+     $statement = $this->dbConnect->prepare("SELECT * FROM api_keys WHERE api_key = :api_key AND random_string = :random_string");
+     $statement->bindParam(":api_key", $api_key);
+     $statement->bindParam(":random_string", $random_string);
      $statement->execute();
      $result1 = $statement->fetch(PDO::FETCH_ASSOC);
-     $this->account_number = $result1['account_number'];
-
-   } catch (Exception $e) {
-     $this->throwError(ACCESS_TOKEN_ERRORS, $e->getMessage());
-   }
+       if ($result1) {
+         $this->kyc_id = $result1['kyc_id'];
+         $kyc_id = $this->kyc_id;
+         $query = $this->dbConnect->prepare("SELECT * FROM kyc WHERE id = :kyc_id");
+         $query->bindParam(":kyc_id", $kyc_id);
+         $query->execute();
+         $result = $query->fetch(PDO::FETCH_ASSOC);
+         $this->account_number = $result['account_number'];
+         // print_r($result1);
+        return true;
+       }
+       else {
+        return false ;
+       }
+     } catch (Exception $e) {
+       $this->throwError(ACCESS_TOKEN_ERRORS, $e->getMessage());
+     }
 
  }
 }

@@ -1,0 +1,22 @@
+# Turn Rewrite Engine On
+RewriteEngine on
+Options -Indexes
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+#-----------------------------------------------#
+# Set Global pages
+#-----------------------------------------------#
+
+  RewriteRule ^([a-z0-9-]+)/([a-z]+)(/*)$ root.php?version=$1&request=$2
+  RewriteRule ^([a-z0-9-]+)/([a-z]+)/([0-9]+)(/*)$ root.php?version=$1&request=$2&request_id=$3
+
+#-----------------------------------------------#
+
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)$ $1.html
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php

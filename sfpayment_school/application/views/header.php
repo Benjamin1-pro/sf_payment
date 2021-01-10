@@ -4,7 +4,7 @@
  <head>
    <meta charset="utf-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <title>Sf Payment</title>
+   <title>ULK Sf-Payment</title>
    <!-- Tell the browser to be responsive to screen width -->
    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
    <!-- Bootstrap 3.3.7 -->
@@ -48,7 +48,7 @@
        <!-- mini logo for sidebar mini 50x50 pixels -->
        <span class="logo-mini"><b>Sf-P</b></span>
        <!-- logo for regular state and mobile devices -->
-       <span class="logo-lg"><b>Sf Payment</b></span>
+       <span class="logo-lg"><b>ULK Sf-Payment</b></span>
      </a>
      <!-- Header Navbar: style can be found in header.less -->
      <nav class="navbar navbar-static-top">
@@ -63,40 +63,13 @@
            <li class="dropdown notifications-menu">
              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                <i class="fa fa-bell-o"></i>
-               <span class="label label-warning">10</span>
+               <span class="label label-warning"><span class="count"></span></span>
              </a>
              <ul class="dropdown-menu">
-               <li class="header">You have 10 notifications</li>
+               <li class="header">You have new notifications</li>
                <li>
                  <!-- inner menu: contains the actual data -->
-                 <ul class="menu">
-                   <li>
-                     <a href="#">
-                       <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                     </a>
-                   </li>
-                   <li>
-                     <a href="#">
-                       <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                       page and may cause design problems
-                     </a>
-                   </li>
-                   <li>
-                     <a href="#">
-                       <i class="fa fa-users text-red"></i> 5 new members joined
-                     </a>
-                   </li>
-                   <li>
-                     <a href="#">
-                       <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                     </a>
-                   </li>
-                   <li>
-                     <a href="#">
-                       <i class="fa fa-user text-red"></i> You changed your username
-                     </a>
-                   </li>
-                 </ul>
+                 <ul class="menu"></ul>
                </li>
                <li class="footer"><a href="#">View all</a></li>
              </ul>

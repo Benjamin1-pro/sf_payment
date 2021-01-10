@@ -20,12 +20,12 @@
            <div class="small-box bg-aqua">
              <div class="inner">
                <h3>150</h3>
-               <p>API Subscription</p>
+               <p>Students</p>
              </div>
              <div class="icon">
                <i class="ion ion-bag"></i>
              </div>
-             <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+             <a href="students" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
            </div>
          </div>
          <!-- ./col -->

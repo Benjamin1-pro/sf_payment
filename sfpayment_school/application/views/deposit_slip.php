@@ -18,7 +18,21 @@
         <!-- /.box-header -->
         <div class="box-body">
           <form class="" action="schoolfees/updateSchoolfees" enctype="multipart/form-data" method="post">
-            <?php $pending = unserialize($_GET['pending_id']); foreach ($pending as $key => $value) { $value = (Array)$value;?>
+<?php
+  $this->load->model('apirequestModel');
+  $pending_id = base64_decode($_GET['id']);
+  $data = $this->apirequestModel->curl_request_singleData($pending_id);
+  foreach ($data as $key => $value) { $value = (Array)$value;
+    $roll_number = $value['reason'];
+    $query = "SELECT * FROM students WHERE roll_number = ?";
+    $query = $this->db->query($query, $roll_number);
+    $query = $query->result_array();
+    foreach ($query as $key => $value1) {
+      $mobileno = $value1['telephone'];
+			$studentName = $value1['fname'].' '.$value1['lname'];
+      $class = $value1['class'];
+    }
+?>
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
@@ -28,7 +42,7 @@
                 <div class="form-group">
                   <label>Class</label>
                   <select class="form-control select2" name="class" style="width: 100%;">
-                    <option value="" desable>Select a class</option>
+                    <option value="" desable><?php echo $class; ?></option>
                     <option value="Y1-CS-D">Y1-CS-D</option>
                     <option value="Y2-CS-D">Y2-CS-D</option>
                     <option value="Y3-CS-D">Y3-CS-D</option>
@@ -88,7 +102,9 @@
             <div class="col-md-3">
               <span class="input-group-btn">
                  <button type="submit" class="btn btn-primary">Approve</button>
-                 <input type="text" name="transactionID" hidden value="<?php echo $value['id'];?>">
+                 <input type="text" name="transactionID" hidden  value="<?php echo $value['id'];?>">
+                 <input type="text" name="phone_number"  hidden value="<?php echo $mobileno; ?>">
+                 <input type="text" name="student_names" hidden value="<?php echo $studentName; ?>">
               </span>
               <span class="input-group-btn">
                  <button type="button" class="btn btn-danger" style="background:#ba575b;">Cancel</button>

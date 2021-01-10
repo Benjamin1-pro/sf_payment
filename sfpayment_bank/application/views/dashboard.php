@@ -21,7 +21,7 @@
            <div class="small-box bg-aqua">
              <div class="inner">
                <h3>150</h3>
-               <p>KYC</p>
+               <p>Clients</p>
              </div>
              <div class="icon">
                <i class="ion ion-bag"></i>
@@ -36,12 +36,12 @@
              <div class="inner">
                <h3>53<sup style="font-size: 20px">%</sup></h3>
 
-               <p>Deposit</p>
+               <p>API Subscription</p>
              </div>
              <div class="icon">
                <i class="ion ion-stats-bars"></i>
              </div>
-             <a href="transaction_list" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+             <a href="api_subscription" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
            </div>
          </div>
          <!-- ./col -->
@@ -50,7 +50,7 @@
            <div class="small-box bg-red">
              <div class="inner">
                <h3>65</h3>
-               <p>Payment Approved</p>
+               <p>Payment</p>
              </div>
              <div class="icon">
                <i class="ion ion-pie-graph"></i>

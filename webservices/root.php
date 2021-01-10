@@ -2,5 +2,5 @@
 require_once('autoload.php');
 
 $api = new Api;
-$api->processApi();
+$api->version_ressource_validation();
 ?>

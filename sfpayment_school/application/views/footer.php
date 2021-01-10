@@ -11,24 +11,58 @@
 
 <!-- jQuery 3 -->
 <script src="annex/bower_components/jquery/dist/jquery.min.js"></script>
+
+<!-- Notifications -->
 <script>
-$(document).ready(function()
-{
-  setInterval(function()
+  $(document).ready(function(){
+
+  function load_unseen_notification(view = '')
   {
+
+  }
+
+  $(document).on('click', '.dropdown-toggle', function(){
+  $('.count').html('');
+  load_unseen_notification('yes');
+  });
+
+  setInterval(function(){
     $.ajax({
-      url:"schoolfees/get_transaction",
+     url:"notifications/viewStatus",
+     method:"GET",
+     dataType:"json",
+     success:function(data)
+     {
+      $('.menu').html(data.notification);
+      if(data.unseen_notification > 0)
+      {
+       $('.count').html(data.unseen_notification);
+      }
+     }
+    });
+  refresh();
+  },1000);
+
+  });
+</script>
+
+<!-- Send Selected Bank to the Controller -->
+<script>
+$(document).ready(function(){
+  $('#select_bank').change(function(){
+    var bank = $(this).val();
+    $.ajax({
+      url:"schoolfees/get_transaction?bank="+bank,
       method:"get",
-      success:function(response){
-        $('#transaction_list').html(response);
+      success:function(data){
+        $('#transaction_lists').html(data);
       }
     });
-    refresh();
-  }, 1000);
-
-
+  });
+  load();
 });
 </script>
+
 <!-- jQuery UI 1.11.4 -->
 <script src="annex/bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->

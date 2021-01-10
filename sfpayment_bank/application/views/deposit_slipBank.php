@@ -26,16 +26,21 @@
                   <input type="text" name="bankslip_number" class="form-control" id="exampleInputEmail1" placeholder="Bank Slip Number">
                 </div>
                 <div class="form-group">
+                  <label for="exampleInputEmail1">Bank Name</label>
+                  <input type="text" name="bank_name" class="form-control" value="Equity Bank" placeholder="Bank Name">
+                </div>
+                <div class="form-group">
                   <label for="exampleInputEmail1">Reason</label>
                   <input type="text" name="reason" class="form-control" id="exampleInputEmail1" placeholder="Bank Name">
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputEmail1">Account Number</label>
-                  <input type="text" name="account_number" class="form-control" id="exampleInputEmail1" placeholder="Account Number">
-                </div>
-                <div class="form-group">
                   <label for="exampleInputEmail1">Account Name</label>
-                  <input type="text" name="account_name" class="form-control" id="exampleInputEmail1" placeholder="Account Name">
+                  <input type="text" name="account_name" class="form-control" id="search" placeholder="Account Name">
+                </div>
+                <div class="list-group" id="show_kyc"></div>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Account Number</label>
+                  <input type="text" name="account_number" class="form-control" id="show_accountnumber" placeholder="Account Number">
                 </div>
                 <div class="form-group">
                   <label for="exampleInputPassword1">Amount (Rwf)</label>
